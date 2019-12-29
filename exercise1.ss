@@ -39,8 +39,7 @@
         ((and (>= y x) (>= z x)) (+ y z))
         ))
 
-(display (sumOfBigger 1 2 3))
-(newline)
+(display (sumOfBigger 1 2 3))(newline)
 
 ;另解
 (define (bigger x y)
@@ -61,7 +60,7 @@
 
 
 ;1.6
-;会陷入无限循环，因为是应用序求职，在调用new-if的过程中先求值所有的实参，于是无限递归
+;会陷入无限循环，因为是应用序求值，在调用new-if的过程中先求值所有的实参，于是无限递归
 (define (new-if predicate then-clause else-clause)
     (cond (predicate then-clause)
         (else else-clause)))
@@ -102,10 +101,8 @@
 (define (sqrt x)
     (sqrt-iter 1.0 x))
 
-(display (sqrt 0.0000000009))
-(newline)
-(display (sqrt 900000000000000000000))
-(newline)
+(display (sqrt 0.0000000009))(newline)
+(display (sqrt 900000000000000000000))(newline)
 
 ;1.8
 (define (improve-cube guess x)
@@ -119,5 +116,64 @@
 (define (cube-root x)
     (cube-root-iter 1.0 x))
 
-(display (cube-root 8))
+(display (cube-root 8))(newline)
+
+;1.9
+;第一种:(+ 4 5) -> (inc (+ (dec 4) 5)) -> (inc (+ 3 5)) -> (inc (inc (+ (dec 3) 5))) 
+;    ---> (inc (inc (inc (inc (inc (+ 0 5)))))) ->9 计算过程为递归
+;第二种:(+ 4 5) -> (+ (dec 4) (inc 5)) -> (+ 3 6) ---> (+ 0 9) -> 9 计算过程为迭代
+
+
+;1.10
+;(A 1 10) -> (A 0 (A 1 9)) -> (A 0 (A 0 (A 1 8))) ---> (A 0 (A 0 ... 2)) ---> 1024
+;(A 2 4) -> (A 1 (A 2 3) -> (A 1 (A 1 (A 2 2))) -> (A 1 (A 1 (A 1 2))) ---> (A 1 (A 1 4))
+;    -> (A 1 (A 0 (A 1 3))) -> (A 1 16) -> 65536
+;(A 3 3) -> (A 2 (A 3 2)) -> (A 2 (A 2 (A 3 1))) ... -> 65536
+;(f n) -> 2n    (g n) -> 2^n    (h n) -> (g (h n-1))-> 2^(h n-1) -> 2^2^(h n-2) ---> 2^2...^2
+(define (A x y)
+    (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+        (else (A (- x 1) (A x (- y 1))))))
+
+(display (A 1 10))(newline)
+(display (A 2 4))(newline)
+(display (A 3 3))(newline)
+
+
+;1.11
+;递归
+(define (f n)
+    (if (< n 3)
+        n
+        (+ (f (- n 1)) (* 2 (f (- n 2))) (* 3 (f (- n 3))))))
+;迭代
+(define (f n)
+    (define (f-iter a b c count)
+        (if (= count 0)
+            c
+            (f-iter (+ a (* 2 b) (* 3 c)) a b (- count 1))))
+    (f-iter 2 1 0 n))
+
+
+;1.12
+(define (pascal row col)
+    (cond ((> col row) 0)
+        ((= col 1) 1)
+        (else (+ (pascal (- row 1) (- col 1)) 
+                (pascal (- row 1) col)))))
+(display (pascal 2 2))(newline)
+(display (pascal 3 2))(newline)
+(display (pascal 4 3))(newline)
+(display (pascal 4 4))(newline)
+(display (pascal 5 3))(newline)
+;迭代版本使用组合数公式即可，略
+
+
+;1.13
+;数归证已给条件即可
+
+
+
+
 (exit)
