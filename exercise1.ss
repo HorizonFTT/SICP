@@ -39,7 +39,7 @@
         ((and (>= y x) (>= z x)) (+ y z))
         ))
 
-(display (sumOfBigger 1 2 3))(newline)
+;(display (sumOfBigger 1 2 3))(newline)
 
 ;另解
 (define (bigger x y)
@@ -101,8 +101,8 @@
 (define (sqrt x)
     (sqrt-iter 1.0 x))
 
-(display (sqrt 0.0000000009))(newline)
-(display (sqrt 900000000000000000000))(newline)
+; (display (sqrt 0.0000000009))(newline)
+; (display (sqrt 900000000000000000000))(newline)
 
 ;1.8
 (define (improve-cube guess x)
@@ -116,7 +116,7 @@
 (define (cube-root x)
     (cube-root-iter 1.0 x))
 
-(display (cube-root 8))(newline)
+; (display (cube-root 8))(newline)
 
 ;1.9
 ;第一种:(+ 4 5) -> (inc (+ (dec 4) 5)) -> (inc (+ 3 5)) -> (inc (inc (+ (dec 3) 5))) 
@@ -136,9 +136,9 @@
         ((= y 1) 2)
         (else (A (- x 1) (A x (- y 1))))))
 
-(display (A 1 10))(newline)
-(display (A 2 4))(newline)
-(display (A 3 3))(newline)
+; (display (A 1 10))(newline)
+; (display (A 2 4))(newline)
+; (display (A 3 3))(newline)
 
 
 ;1.11
@@ -162,16 +162,81 @@
         ((= col 1) 1)
         (else (+ (pascal (- row 1) (- col 1)) 
                 (pascal (- row 1) col)))))
-(display (pascal 2 2))(newline)
-(display (pascal 3 2))(newline)
-(display (pascal 4 3))(newline)
-(display (pascal 4 4))(newline)
-(display (pascal 5 3))(newline)
+; (display (pascal 2 2))(newline)
+; (display (pascal 3 2))(newline)
+; (display (pascal 4 3))(newline)
+; (display (pascal 4 4))(newline)
+; (display (pascal 5 3))(newline)
 ;迭代版本使用组合数公式即可，略
 
 
 ;1.13
 ;数归证已给条件即可
+
+
+;1.14
+;                     (cc 11 5)
+;                 (cc 11 4)+(cc -39 5)
+;             (cc 11 3)+(cc -14 4)+0
+;         (cc 11 2)+(cc 1 3)+0
+;     (cc 11 1)+(cc 6 2)+(cc 1 2)+(cc -9 3)
+; (cc 11 0)+(cc 10 1)+(cc 6 1)+(cc 1 2)+(cc 1 1)+(cc -3 2)+0
+; 下略
+;空间O(n),时间O(2^n)
+
+
+;1.15
+;12.15/3=4.05,4.05/3=1.35,1.35/3=0.45,0.45/3=0.15,0.15/3=0.05,故调用了5次
+;空间O(loga),时间O(loga)
+
+
+;1.16
+(define (even? n)
+    (= (remainder n 2) 0))
+
+(define (expt-iter b count product)
+    (cond ((= count 0) product)
+        ((even? count) (expt-iter (square b) (/ count 2) product))
+        (else (expt-iter b (- count 1) (* product b)))))
+
+(define (expt b n)
+    (expt-iter b n 1))
+; (display (expt 2 10))(newline)
+; (display (expt 2 3))(newline)
+; (display (expt 3 3))(newline)
+
+
+;1.17
+(define (multiply a b)
+    (cond ((= b 0) 0)
+        ((even? b) (* 2 (multiply a (/ b 2))))
+        (else (+ a (multiply a (- b 1))))))
+; (display (multiply 4 5))(newline)
+; (display (multiply 3 3))(newline)
+
+
+;1.18
+(define (fast-multiply-iter a b product)
+    (cond ((= b 0) product)
+        ((even? b) (fast-multiply-iter (* 2 a) (/ b 2) product))
+        (else (fast-multiply-iter a (- b 1) (+ product a)))))
+
+(define (fast-multiply a b)
+    (fast-multiply-iter a b 0))
+; (display (fast-multiply 4 5))(newline)
+; (display (fast-multiply 3 3))(newline)
+
+
+;1.19
+;计算得p`=p^2+q^2,q`=2pq+q^2
+;详见https://sicp.readthedocs.io/en/latest/chp1/19.html
+
+
+;1.20
+;正则序:(gcd 206 40) -> (gcd 40 (remainder 206 40)) 
+;   -> (gcd (remainder 206 40) (remainder 40 (remainder 206 40)))
+;下略
+;应用序每调用一次gcd遍调用一次remainder，故5次
 
 
 
