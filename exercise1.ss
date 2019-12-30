@@ -309,5 +309,227 @@
 ;见https://sicp.readthedocs.io/en/latest/chp1/28.html
 
 
+;1.29
+(define (sum term a next b)
+    (if (> a b)
+        0
+        (+ (term a) (sum term (next a) next b))))
+
+(define (integral f a b n)
+    (define h (/ (- b a) n))
+    (define (y k)
+        (f (+ a (* k h))))
+    (define (term k)
+        (cond ((or (= k 0) (= k n)) (y k))
+            ((even? k) (* 2 (y k)))
+            (else (* 4 (y k)))))
+    (define (next k)
+        (+ k 1))
+    (/ (* h (sum term 0.0 next n)) 3))
+
+(define (cube x)
+    (* x x x))
+; (display (integral cube 0 1 100))(newline)
+; (display (integral cube 0 1 1000))(newline)
+
+
+;1.30
+(define (sum term a next b)
+    (define (iter a result)
+        (if (> a b)
+            result
+            (iter (next a) (+ result (term a)))))
+    (iter a 0))
+
+
+;1.31
+(define (product term a next b)
+    (if (> a b)
+        1
+        (* (term a) (product term (next a) next b))))
+
+(define (factorial n)
+    (define (term x)
+        (if (= x 0)
+            1
+            x))
+    (define (next x)
+        (+ x 1))
+    (product term 0 next n))
+
+(define (pai n)
+    (define (numer-term x) 
+        (cond ((= x 1) 2)
+            ((even? x) (+ 2 x))
+            (else (+ x 1))))
+    (define (denom-term x)
+        (if (odd? x)
+            (+ x 2)
+            (+ x 1)))
+    (define (next x)
+        (+ x 1))
+    (* 4 (exact->inexact (/ (product numer-term 1 next n) (product denom-term 1 next n)))))
+; (display (pai 10000))(newline)
+(define (product term a next b)
+    (define (iter a result)
+        (if (> a b)
+            result
+            (iter (next a) (* result (term a)))))
+    (iter a 1))
+; (display (factorial 0))(newline)
+; (display (factorial 3))(newline)
+; (display (factorial 4))(newline)
+
+
+;1.32
+(define (accumulate combiner null-value term a next b)
+    (if (> a b)
+        null-value
+        (combiner (term a) (accumulate combiner null-value term (next a) next b))))
+
+(define (sum term a next b)
+    (define (combiner a b)
+        (+ a b))
+    (accumulate combiner 0 term a next b))
+
+(define (product term a next b)
+    (define (combiner a b)
+        (* a b))
+    (accumulate combiner 1 term a next b))
+
+(define (accumulate combiner null-value term a next b)
+    (define (iter a result)
+        (if (> a b)
+            result
+            (iter (next a) (combiner result (term a)))))
+    (iter a null-value))
+
+
+;1.33
+(define (filtered-accumulate combiner null-value term a next b filter)
+    (define (iter a result)
+        (cond ((> a b) result)
+            ((filter a) (iter (next a) (combiner result (term a))))
+            (else (iter (next a) result))))
+    (iter a null-value))
+
+(define (prime-sum a b)
+    (define (term x) x)
+    (define (next x) (+ x 1))
+    (filtered-accumulate + 0 term a next b prime?))
+
+(define (product-of-coprimes n)
+    (define (coprime? x)
+        (and (< x n) (= 1 (gcd x n))))
+    (define (term x) x)
+    (define (next x) (+ x 1))
+    (filtered-accumulate * 1 term a next b coprime?))
+
+
+;1.34
+;(define (f g) (g 2))
+;(f f)
+;产生错误: Exception: attempt to apply non-procedure 2, (f f) -> (f 2) -> (2 2) 
+
+
+;1.35
+;证明: x=1+1/x -> x^2-x=1, 符合黄金分割定义，QED
+(define tolerance 0.00001)
+
+(define (fixed-pointed f first-guess)
+    (define (close-enough? v1 v2)
+        (< (abs (- v1 v2)) tolerance))
+    (define (try guess)
+        (let ((next (f guess)))
+            (if (close-enough? guess next)
+                next
+                (try next))))
+    (try first-guess))
+;(display (fixed-pointed (lambda (x) (+ 1 (/ 1 x))) 1.0))(newline)
+
+
+;1.36
+(define (fixed-pointed f first-guess)
+    (define (close-enough? v1 v2)
+        (< (abs (- v1 v2)) tolerance))
+    (define (try guess)
+        (display guess)(newline)
+        (let ((next (f guess)))
+            (if (close-enough? guess next)
+                next
+                (try next))))
+    (try first-guess))
+; (display (fixed-pointed (lambda (x) (/ (log 1000) (log x))) 2.0))(newline)
+
+
+;1.37
+(define (cont-frac n d k)
+    (define (iter count)
+        (if (> count k)
+            0
+            (/ (n count) (+ (d count) (iter (+ count 1))))))
+    (iter 1))
+
+(define (cont-frac n d k)
+    (define (iter i result)
+        (if (= i 0)
+            result
+            (iter (- i 1) (/ (n i) (+ (d i) result)))))
+    (iter (- k 1) (/ (n k) (d k))))
+; (display (cont-frac (lambda (x) 1.0) (lambda (x) 1.0) 11))(newline)
+
+
+;1.38
+(define (d i)
+    (if (= 0 (remainder (+ i 1) 3))
+            (* 2 (/ (+ i 1) 3))
+            1))
+; (display (+ 2(cont-frac (lambda (x) 1.0) d 100)))(newline)
+
+
+;1.39
+(define (tan-cf x)
+    (define (n i)
+        (if (= i 1)
+            x
+            (- 0 (square x))))
+    (define (d i) (- (* 2 i) 1))
+    (cont-frac n d 1000))
+; (display (tan-cf (/ 3.1415926535 4)))(newline)
+
+
+;1.40
+(define (cubic a b c)
+    (lambda (x) (+ (cube x) (* a (square x) (* b x) c))))
+
+
+;1.41
+(define (double f)
+    (lambda (x) (f (f x)) ))
+; (display (((double (double double)) (lambda (x) (+ 1 x))) 5))(newline)    ;21
+
+
+;1.42
+(define (compose f g)
+    (lambda (x) (f (g x))))
+; (display ((compose square (lambda (x) (+ 1 x))) 6))(newline)
+
+
+;1.43
+(define (repeated f n)
+    (if (= n 1)
+        f
+        (compose f (repeated f (- n 1)))))
+; (display ((repeated square 2) 5))(newline)
+
+
+;1.44
+(define dx 0.00001)
+
+(define (smooth f)
+    (lambda (x) (/ (+ (f (- x dx) (f x) (f (+ x dx)))) 3)))
+
+
+;1.45
 
 (exit)
