@@ -1,3 +1,5 @@
+(load "fascinating.ss")
+
 ;1.1
 10  ;10
 (+ 5 3 4)   ;12
@@ -238,6 +240,73 @@
 ;下略
 ;应用序每调用一次gcd遍调用一次remainder，故5次
 
+
+;1.21
+(define (smallest-divisor n)
+    (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (+ test-divisor 1)))))
+
+(define (divides? a b)
+    (= (remainder b a) 0))
+
+; (display (smallest-divisor 199))(newline)   ;199
+; (display (smallest-divisor 1999))(newline)  ;1999
+; (display (smallest-divisor 19999))(newline) ;7
+
+
+;1.22
+(define (prime? n)
+    (= n (smallest-divides n)))
+
+;https://sicp.readthedocs.io/en/latest/chp1/22.html
+
+
+;1.23
+(define (next n)
+    (if (= n 2)
+        3
+        (+ n 2)))
+
+(define (find-divisor n test-divisor)
+    (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (next test-divisor)))))
+
+;1.24
+;https://sicp.readthedocs.io/en/latest/chp1/24.html
+
+
+;1.25
+;显然不行，这种方法会计算大数的大次幂，非常慢，并且容易溢出
+
+
+;1.26
+;由于是应用序求值，在改动的部分(expmod base (/ exp 2) m)重复计算了两次
+
+
+;1.27
+(define (check n)
+    (define (try-it a)
+        (= (expmod a n n) a))
+    (define (check-iter a)
+        (cond ((= a n) #t)
+            ((try-it a) (check-iter (+ a 1)))
+            (else #f)))
+    (check-iter 1))
+; (display (check 561))(newline)
+; (display (check 1105))(newline)
+; (display (check 1729))(newline)
+; (display (check 2465))(newline)
+; (display (check 2821))(newline)
+; (display (check 6601))(newline)
+
+
+;1.28
+;见https://sicp.readthedocs.io/en/latest/chp1/28.html
 
 
 
