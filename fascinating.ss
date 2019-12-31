@@ -16,6 +16,13 @@
                         p q (- count 1)))))
 
 
+;GCD
+(define (gcd a b)
+    (if (= b 0)
+        a
+        (gcd b (remainder a b))))
+
+
 ;快速幂取模
 (define (expmod base exp m)
     (cond ((= exp 0) 1)
