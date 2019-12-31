@@ -41,21 +41,21 @@
 
 
 ;2.4
-(define (cdr z)
-    (z (lambda (p q) q)))
+; (define (cdr z)
+;     (z (lambda (p q) q)))
 
 
 ;2.5
-(define (cons a b)
-    (* (expt 2 a) (expt 3 b)))
-(define (car z)
-    (if (= 0 (remainder z 2))
-        (+ 1 (car (/ z 2)))
-        0))
-(define (cdr z)
-    (if (= 0 (remainder z 3))
-        (+ 1 (car (/ z 3)))
-        0))
+; (define (cons a b)
+;     (* (expt 2 a) (expt 3 b)))
+; (define (car z)
+;     (if (= 0 (remainder z 2))
+;         (+ 1 (car (/ z 2)))
+;         0))
+; (define (cdr z)
+;     (if (= 0 (remainder z 3))
+;         (+ 1 (car (/ z 3)))
+;         0))
 
 
 ;2.6
@@ -92,7 +92,7 @@
         result
         (iter (cdr remained-items)
               (cons (car remained-items) result))))
-
+; (display (reverse (list 1 2 3 4)))(newline)
 
 ;2.19
 (define (cc amount coin-values)
@@ -111,15 +111,86 @@
 
 
 ;2.20
-
 ; (define (same-parity x . z)
-;     (if (= (remainder x 2) (remainder (car z) 2))
-;         (cons x (cons (car z) (same-parity x (cdr z))))
-;         (cons x (same-parity x (cdr z)))))
+;     ())
 
-; (same-parity 1 2 3 4 5 6 7)
-;bug:递归会产生((3 4 5 6 7))导致报错
+; (display (same-parity 1 2 3 4 5 6 7))(newline)
 
 
 ;2.21
+(define (square x) (* x x))
+
+(define (square-list items)
+    (if (null? items)
+        '()
+        (cons (square (car items)) (square-list (cdr items)))))
+
+(define (square-list items)
+    (map square items))
+
+; (display (square-list (list 1 2 3 4 5 6 7)))(newline)
+
+
+;2.22
+;第一种组合顺序反了，第二种组合方式错误
+;正确方式:最后将answer取反即可
+
+
+;2.23
+(define (for-each proc items)
+    (cond ((not (null? items)) (proc (car items)) (for-each proc (cdr items)))))
+; (for-each (lambda (x) (newline) (display x)) (list 1 2 3 4))
+
+
+;2.24
+;       (1 (2 (3 4)))
+;       1           (2 (3 4))
+;                   2       (3 4)
+;                           3   4
+
+
+;2.25
+; (define l (list 1 2 (list 5 7) (list 9)))
+; (display (car (cdaddr l)))(newline)
+; (define l (list (list 7)))
+; (display (caar l))(newline)
+; (define l (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+; (display (cadadr (cadadr (cadadr l))))(newline)
+
+
+;2.26
+; (1 2 3 4 5 6)
+; ((1 2 3) 4 5 6)
+; ((1 2 3) (4 5 6))
+
+
+;2.27
+(define (deep-reverse items)
+    (iter items '()))
+
+(define (iter remained-items result)
+    (if (null? remained-items)
+        result
+        (iter (cdr remained-items)
+              (cons (if (pair? (car remained-items))
+                        (deep-reverse (car remained-items))
+                        (car remained-items)) result))))
+
+; (display (deep-reverse (list (list 1 2) (list 3 4) (list 5 6))))
+
+
+;2.28
+(define (fringe tree)
+    (cond ((null? tree)
+            '())
+          ((not (pair? tree))
+            (list tree))
+          (else
+            (append (fringe (car tree))
+                    (fringe (cadr tree))))))
+(display (fringe (list (list 1 2) (list 3 4))))(newline)
+
+
+;2.29
+
 (exit)
