@@ -188,9 +188,42 @@
           (else
             (append (fringe (car tree))
                     (fringe (cadr tree))))))
-(display (fringe (list (list 1 2) (list 3 4))))(newline)
+; (display (fringe (list (list 1 2) (list 3 4))))(newline)
 
 
 ;2.29
+(define (make-mobile left right)
+    (list left right))
+(define (make-branch length structure)
+    (list length structure))
+(define (left-branch mobile) (car mobile))
+(define (right-branch mobile) (cadr mobile))
+(define (branch-length branch) (car branch))
+(define (branch-structure branch) (cadr branch))
+(define (branch-weight branch)
+        (let ((structure (branch-structure branch)))
+            (if (pair? structure)
+                (total-weight structure)
+                structure))
+        )
+(define (total-weight mobile)
+    (+ (branch-weight (left-branch mobile)) (branch-weight (right-branch mobile))))
+(define (branch-torque branch)
+    (* (branch-length branch)
+       (branch-weight branch)))
+(define (mobile-balance? mobile)
+    (define (branch-balance? branch)
+        (if (pair? (branch-structure branch))
+            (mobile-branch? (branch-structure branch))
+            #t))
+    (let ((left (left-branch mobile))
+          (right (right-branch mobile)))
+        (and
+            (= (branch-torque left) (branch-torque right))
+            (branch-balance? left)
+            (branch-balance? right))))
+;只需改动四个选择函数即可
+
+
 
 (exit)
