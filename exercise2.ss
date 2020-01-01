@@ -225,5 +225,41 @@
 ;只需改动四个选择函数即可
 
 
+;2.30
+(define (square-tree tree)
+    (cond ((null? tree) '())
+        ((not (pair? tree)) (square tree))
+        (else (cons (square-tree (car tree)) (square-tree (cdr tree))))))
+
+(define (square-tree tree)
+    (map (lambda (sub-tree)
+                (if (pair? sub-tree)
+                    (square-tree sub-tree)
+                    (square sub-tree))) tree))
+; (display (square-tree (list (list 1 2) (list 3 4))))(newline)
+
+
+;2.31
+(define (tree-map f tree)
+    (map (lambda (sub-tree)
+                (if (pair? sub-tree)
+                    (tree-map f sub-tree)
+                    (f sub-tree))) tree))
+(define (square-tree tree) (tree-map square tree))
+; (display (square-tree (list (list 1 2) (list 3 4))))(newline)
+
+
+;2.32
+(define (subsets s)
+    (if (null? s)
+        (list '())
+        (let ((rest (subsets (cdr s))))
+            (append rest (map (lambda (set) (cons (car s) set)) rest)))))
+(display (subsets (list 1 2 3)))(newline)
+;递归的过程，以(1 2 3)为例,先得到(()),再将3与各元素组合得到(() (3)),再将2与各元素组合
+;得到(() (3) (2) (2 3)),再1即得结果
+
+
+;2.33
 
 (exit)
