@@ -255,19 +255,74 @@
         (list '())
         (let ((rest (subsets (cdr s))))
             (append rest (map (lambda (set) (cons (car s) set)) rest)))))
-(display (subsets (list 1 2 3)))(newline)
+; (display (subsets (list 1 2 3)))(newline)
 ;递归的过程，以(1 2 3)为例,先得到(()),再将3与各元素组合得到(() (3)),再将2与各元素组合
 ;得到(() (3) (2) (2 3)),再1即得结果
 
 
 ;2.33
-(define (map p sequence)
-    (accumulate (lambda (x y) (cons (p x) y)) '() sequence))
-(define (append seq1 seq2)
-    (accumulate cons seq2 seq1))
-(define (length sequence)
-    (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+; (define (map p sequence)
+;     (accumulate (lambda (x y) (cons (p x) y)) '() sequence))
+; (define (append seq1 seq2)
+;     (accumulate cons seq2 seq1))
+; (define (length sequence)
+;     (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
 
 
 ;2.34
+(define (horner-eval x coefficient-sequence)
+    (accumulate (lambda (this-coeff higher-terms) (+ this-coeff (* x higher-terms)))
+                0 coefficient-sequence))
+; (display (horner-eval 2 (list 1 3 0 5 0 1)))(newline)
+
+
+;2.35
+(define (count-leaves t)
+    (accumulate + 0 (map (lambda (sub-tree)
+                                (if (pair? sub-tree)
+                                    (count-leaves sub-tree)
+                                    1)) t)))
+; (display (count-leaves (list (list 1 (list 2 3)) (list (list 4 5) (list 6 7)))))(newline)
+
+
+;2.36
+(define (accumulate-n op init seqs)
+    (if (null? (car seqs))
+        '()
+        (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
+; (display (accumulate-n + 0 (list (list 1 2 3) (list 4 5 6) (list 7 8 9) (list 10 11 12))))(newline)
+
+
+;2.37
+(define (dot-product v w)
+    (accumulate + 0 (map * v w)))
+(define (matrix-*-vector m v)
+    (map (lambda (col) (dot-product col v)) m))
+(define (transpose mat)
+    (accumulate-n cons '() mat))
+(define (matrix-*-matrix m n)
+    (let ((cols (transpose n)))
+        (map (lambda (col) (matrix-*-vector cols col)) m)))
+
+
+;2.38
+(define fold-right accumulate)
+(define (fold-left op initial sequence)
+    (define (iter result rest)
+        (if (null? rest)
+            result
+            (iter (op result (car rest)) (cdr rest))))
+    (iter initial sequence))
+;op符合结合律即可
+
+
+;2.39
+(define (reverse sequence)
+    (fold-right (lambda (x y) (cons y x)) '() sequence))
+(define (reverse sequence)
+    (fold-left (lambda (x y) (append y (list x))) '() sequence))
+
+
+;2.40
 (exit)
