@@ -46,5 +46,8 @@
         '()
         (cons low (enumerate-interval (+ low 1) high))))
 
+;嵌套映射
+(define (flatmap proc seq)
+    (accumulate append '() (map proc seq)))
 
 ;(exit)

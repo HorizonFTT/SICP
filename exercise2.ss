@@ -325,4 +325,25 @@
 
 
 ;2.40
+(define (unique-pairs n)
+    (flatmap (lambda (i) (map (lambda (j) (list i j)) (enumerate-interval 1 (- i 1))))
+                (enumerate-interval 1 n)))
+
+
+;2.41
+(define (unique-triples n)
+    (flatmap (lambda (i) (map (lambda (j) (cons i j)) (unique-pairs (- i 1))))
+                (enumerate-interval 1 n)))
+(define (triple-sum-equal? sum triple)
+    (= sum
+       (fold-right + 0 triple)))
+(define (remove-triples-not-equal sum triple)
+    (filter (lambda (current-triple)
+                (triple-sum-equal? sum current-triple))
+            triple))
+; (display (remove-triples-not-equal 11 (unique-triples 13)))(newline)
+
+
+;2.42
+
 (exit)
