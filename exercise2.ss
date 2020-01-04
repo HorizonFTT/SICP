@@ -389,4 +389,17 @@
         painter
         (let ((smaller (up-split painter (- n 1))))
             (below painter (beside smaller smaller)))))
+
+    
+;2.45
+(define (split big small)
+    (lambda (p n) (
+        (if (= n 0)
+            p
+            (let ((smaller ((split big small) p (- n 1))))
+                (big p (small smaller smaller)))))))
+
+
+;2.46
+
 (exit)
