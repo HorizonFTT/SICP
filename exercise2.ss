@@ -441,7 +441,7 @@
 (define left (make-segment top-left bottom-left))
 (define right (make-segment top-right bottom-right))
 (define bottom (make-segment bottom-left bottom-right))
-(define draw-a (segments->painter (list top bottom left right)))
+; (define draw-a (segments->painter (list top bottom left right)))
 
 (define left-top (make-vect 0.0 1.0))
 (define right-bottom (make-vect 1.0 0.0))
@@ -449,7 +449,7 @@
 (define left-bottom (make-vect 0.0 0.0))
 (define left-top-to-right-bottom (make-segment left-top right-bottom))
 (define right-top-to-left-bottom (make-segment right-top left-bottom))
-(define draw-b (segments->painter (list left-top-to-right-bottom right-top-to-left-bottom)))
+; (define draw-b (segments->painter (list left-top-to-right-bottom right-top-to-left-bottom)))
 
 (define top-mid-point (make-vect 0.5 1.0))
 (define bottom-mid-point (make-vect 0.5 0.0))
@@ -459,7 +459,7 @@
 (define top-to-right (make-segment top-mid-point right-mid-point))
 (define bottom-to-left (make-segment bottom-mid-point left-mid-point))
 (define bottom-to-right (make-segment bottom-mid-point right-mid-point))
-(define draw-c (segments->painter (list top-to-left top-to-right bottom-to-left bottom-to-right)))
+; (define draw-c (segments->painter (list top-to-left top-to-right bottom-to-left bottom-to-right)))
 
 
 ;2.50
@@ -475,9 +475,9 @@
 (define (below painter1 painter2)
     (let ((split-point (make-vect 0.0 0.5)))
         (let ((paint-top
-                (transform-painter painter2 split-point (make-vect 1.0 0.5) (make-vect 0.0 1.0)))
+                (transform-painter1 painter2 split-point (make-vect 1.0 0.5) (make-vect 0.0 1.0)))
               (paint-down
-                (transform-painter painter1 (make-vect 0.0 0.0) (make-vect 1.0 0.0) split-point)))
+                (transform-painter2 painter1 (make-vect 0.0 0.0) (make-vect 1.0 0.0) split-point)))
             (lambda (frame) (paint-top frame) (paint-down frame)))))
 
 (define (below painter1 painter2)
@@ -493,5 +493,32 @@
 
 
 ;2.53
+; (a b c)
+; ((george))
+; ((y1 y2))
+; (y1 y2)
+; #f
+; #f
+; (red shoes blue socks)
 
+
+;2.54
+(define (equal? a b)
+    (define (list-equal? a b)
+        (cond ((and (null? a) (null? b)) #t)
+            ((or (null? a) (null? b)) #f)
+            ((equal? (car a) (car b)) (equal? (cdr a) (cdr b)))
+            (else #f)))
+    (cond ((and (list? a) (list? b)) (list-equal? a b))
+        ((and (symbol? a) (symbol? b)) (eq? a b))
+        (else #f)))
+; (display (equal? (list 'a 'b 'c) (list 'a 'b 'c)))(newline)
+; (display (equal? (list 'a) (list 'a 'b 'c)))(newline)
+
+
+;2.55
+; (car ''abracadabra) -> (car '(quote abracadabra)) -> quote
+
+
+;2.56
 (exit)
