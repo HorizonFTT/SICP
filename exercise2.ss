@@ -582,4 +582,7 @@
 ; (display (deriv '(* x y) 'x))(newline)
 ; (display (deriv '(+ x y) 'x))(newline)
 ; (display (deriv '(+ (* x 3) (* x (+ y 2))) 'x))(newline)
+
+
+;2.57
 (exit)
